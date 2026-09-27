@@ -18,3 +18,5 @@ SELECT customers.region, SUM(orders.sales) FROM orders JOIN customers ON orders.
 
 SELECT customers.customer_name, COUNT(orders.order_id) FROM customers LEFT JOIN orders ON customers.customer_id = orders.customer_id GROUP BY customers.customer_id;
 
+SELECT products.sub_category, AVG(orders.discount) FROM products LEFT JOIN orders ON products.product_id = orders.product_id GROUP BY products.sub_category;
+
