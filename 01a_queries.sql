@@ -26,3 +26,5 @@ SELECT customers.region, SUM(orders.sales), AVG(orders.discount), COUNT(orders.o
 
 SELECT customers.region, SUM(CASE WHEN orders.sales > 1000 THEN 1 ELSE 0 END) AS high_value, SUM(CASE WHEN orders.sales <= 1000 THEN 1 ELSE 0 END) AS low_value FROM customers JOIN orders ON customers.customer_id = orders.customer_id GROUP BY customers.region;
 
+SELECT customers.customer_name, SUM(orders.sales), AVG(orders.discount), COUNT(orders.order_id), CASE WHEN SUM(orders.sales) > 2500 THEN 'VIP' ELSE 'REGULAR' END FROM customers LEFT JOIN orders ON customers.customer_id = orders.customer_id GROUP BY customers.customer_id ORDER BY SUM(orders.sales) DESC NULLS LAST;
+
