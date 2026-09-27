@@ -22,3 +22,5 @@ SELECT products.sub_category, AVG(orders.discount) FROM products LEFT JOIN order
 
 SELECT customers.customer_name, SUM(orders.sales) FROM customers JOIN orders ON customers.customer_id = orders.customer_id GROUP BY customers.customer_id HAVING SUM(orders.sales) > 2000.00;
 
+SELECT customers.region, SUM(orders.sales), AVG(orders.discount), COUNT(orders.order_id) FROM customers LEFT JOIN orders ON customers.customer_id = orders.customer_id GROUP BY customers.region;
+
