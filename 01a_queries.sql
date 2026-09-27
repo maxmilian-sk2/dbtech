@@ -15,3 +15,6 @@ SELECT products.product_name, SUM(orders.sales) FROM products LEFT JOIN orders O
 SELECT customers.customer_name, orders.order_id, orders.sales FROM customers FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
 
 SELECT customers.region, SUM(orders.sales) FROM orders JOIN customers ON orders.customer_id = customers.customer_id GROUP BY customers.region;
+
+SELECT customers.customer_name, COUNT(orders.order_id) FROM customers LEFT JOIN orders ON customers.customer_id = orders.customer_id GROUP BY customers.customer_id;
+
