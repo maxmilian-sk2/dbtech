@@ -11,3 +11,6 @@ SELECT orders.order_id, customers.customer_name, products.category, orders.sales
 SELECT customers.region, SUM(orders.sales) FROM orders RIGHT JOIN customers on orders.customer_id = customers.customer_id GROUP BY customers.region;
 
 SELECT products.product_name, SUM(orders.sales) FROM products LEFT JOIN orders ON products.product_id = orders.product_id GROUP BY products.product_id;
+
+SELECT customers.customer_name, orders.order_id, orders.sales FROM customers FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
+
