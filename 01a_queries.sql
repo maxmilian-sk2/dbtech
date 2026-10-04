@@ -8,3 +8,5 @@ SELECT flourmills_sales.product_name, flourmills_sales.total_amount, flourmills_
 
 SELECT month, monthly_sales FROM (SELECT EXTRACT(MONTH FROM flourmills_sales.sale_date) AS month, SUM(total_amount) AS monthly_sales FROM flourmills_sales GROUP BY EXTRACT(MONTH FROM flourmills_sales.sale_date)) AS month_sale ORDER BY monthly_sales DESC;
 
+SELECT product_category, total_sales FROM (SELECT flourmills_sales.product_category, SUM(flourmills_sales.total_amount) AS total_sales FROM flourmills_sales GROUP BY flourmills_sales.product_category) AS cats WHERE total_sales > 50000000 ORDER BY total_sales DESC;
+
