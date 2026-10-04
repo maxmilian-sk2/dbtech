@@ -20,4 +20,5 @@ SELECT flourmills_sales.product_category, flourmills_sales.product_name, flourmi
 
 SELECT cats.product_category FROM (SELECT DISTINCT flourmills_sales.product_category FROM flourmills_sales) AS cats WHERE EXISTS (SELECT 1 FROM flourmills_sales AS fs WHERE fs.product_category = cats.product_category GROUP BY fs.product_category HAVING COUNT(DISTINCT fs.region) > 3) ORDER BY cats.product_category ASC;
 
+SELECT flourmills_sales.region, flourmills_sales.sale_date, flourmills_sales.product_name, flourmills_sales.total_amount FROM flourmills_sales WHERE EXISTS (SELECT 1 FROM flourmills_sales AS fs WHERE fs.region = flourmills_sales.region AND EXTRACT(YEAR FROM fs.sale_date) = 2024) ORDER BY flourmills_sales.sales_id ASC;
 
