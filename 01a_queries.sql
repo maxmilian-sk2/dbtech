@@ -4,3 +4,5 @@ SELECT * FROM flourmills_sales WHERE flourmills_sales.product_category = (SELECT
 
 SELECT flourmills_sales.product_name, flourmills_sales.total_amount, (SELECT AVG(flourmills_sales.total_amount) FROM flourmills_sales) AS avg_amount FROM flourmills_sales;
 
+SELECT flourmills_sales.product_name, flourmills_sales.total_amount, flourmills_sales.total_amount / (SELECT SUM(flourmills_sales.total_amount) FROM flourmills_sales) AS amount_share FROM flourmills_sales;
+
