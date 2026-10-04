@@ -24,3 +24,4 @@ SELECT flourmills_sales.region, flourmills_sales.sale_date, flourmills_sales.pro
 
 SELECT DISTINCT flourmills_sales.product_category FROM flourmills_sales WHERE NOT EXISTS (SELECT 1 FROM flourmills_sales AS fs WHERE fs.product_category = flourmills_sales.product_category AND fs.total_amount > 500000) ORDER BY flourmills_sales.product_category ASC;
 
+SELECT DISTINCT flourmills_sales.region FROM flourmills_sales WHERE NOT EXISTS (SELECT 1 FROM flourmills_sales AS fs WHERE fs.region = flourmills_sales.region AND fs.product_category = 'Flour') ORDER BY flourmills_sales.region ASC;
