@@ -14,3 +14,5 @@ SELECT flourmills_sales.product_name, flourmills_sales.product_category, flourmi
 
 SELECT flourmills_sales.product_name, flourmills_sales.region, flourmills_sales.total_amount, (SELECT MIN(fs.total_amount) FROM flourmills_sales AS fs WHERE fs.region = flourmills_sales.region) AS region_min_amount FROM flourmills_sales ORDER BY flourmills_sales.sales_id ASC;
 
+SELECT flourmills_sales.product_name, flourmills_sales.sale_date, flourmills_sales.total_amount FROM flourmills_sales WHERE EXISTS (SELECT 1 FROM flourmills_sales AS fs WHERE fs.product_name = flourmills_sales.product_name GROUP BY fs.product_name HAVING COUNT(DISTINCT EXTRACT(MONTH FROM fs.sale_date)) > 1) ORDER BY flourmills_sales.sales_id ASC;
+
