@@ -10,3 +10,5 @@ SELECT month, monthly_sales FROM (SELECT EXTRACT(MONTH FROM flourmills_sales.sal
 
 SELECT product_category, total_sales FROM (SELECT flourmills_sales.product_category, SUM(flourmills_sales.total_amount) AS total_sales FROM flourmills_sales GROUP BY flourmills_sales.product_category) AS cats WHERE total_sales > 50000000 ORDER BY total_sales DESC;
 
+SELECT flourmills_sales.product_name, flourmills_sales.product_category, flourmills_sales.total_amount FROM flourmills_sales WHERE flourmills_sales.total_amount > (SELECT AVG(fs.total_amount) FROM flourmills_sales AS fs WHERE fs.product_category = flourmills_sales.product_category);
+
