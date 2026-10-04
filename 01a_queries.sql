@@ -12,3 +12,5 @@ SELECT product_category, total_sales FROM (SELECT flourmills_sales.product_categ
 
 SELECT flourmills_sales.product_name, flourmills_sales.product_category, flourmills_sales.total_amount FROM flourmills_sales WHERE flourmills_sales.total_amount > (SELECT AVG(fs.total_amount) FROM flourmills_sales AS fs WHERE fs.product_category = flourmills_sales.product_category);
 
+SELECT flourmills_sales.product_name, flourmills_sales.region, flourmills_sales.total_amount, (SELECT MIN(fs.total_amount) FROM flourmills_sales AS fs WHERE fs.region = flourmills_sales.region) AS region_min_amount FROM flourmills_sales ORDER BY flourmills_sales.sales_id ASC;
+
