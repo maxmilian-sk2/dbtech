@@ -11,3 +11,13 @@ FROM daily_sales
 WHERE daily_sales.total_daily_sales > 3000000
 ORDER BY daily_sales.total_daily_sales DESC;
 
+WITH category_sales AS (
+    SELECT flourmills_sales.product_category,
+           SUM(flourmills_sales.total_amount) AS total_sales
+    FROM flourmills_sales
+    GROUP BY flourmills_sales.product_category
+)
+SELECT category_sales.product_category,
+       category_sales.total_sales
+FROM category_sales
+ORDER BY category_sales.total_sales DESC;
