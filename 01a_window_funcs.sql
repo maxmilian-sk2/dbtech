@@ -42,3 +42,22 @@ SELECT revenue_share.customer_type,
        revenue_share.revenue_percentage
 FROM revenue_share
 ORDER BY revenue_share.revenue DESC;
+
+WITH ranked_purchases AS (
+    SELECT flourmills_sales.customer_id,
+           flourmills_sales.product_name,
+           flourmills_sales.sale_date,
+           flourmills_sales.total_amount,
+           ROW_NUMBER() OVER (
+               PARTITION BY flourmills_sales.customer_id
+               ORDER BY flourmills_sales.sale_date DESC
+           ) AS purchase_rank
+    FROM flourmills_sales
+)
+SELECT ranked_purchases.customer_id,
+       ranked_purchases.product_name,
+       ranked_purchases.sale_date,
+       ranked_purchases.total_amount
+FROM ranked_purchases
+WHERE ranked_purchases.purchase_rank = 1
+ORDER BY ranked_purchases.customer_id ASC;
