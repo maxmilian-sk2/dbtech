@@ -20,3 +20,13 @@ GROUP BY customers.region, DATE_TRUNC('month', orders.order_date);
 
 SELECT * FROM regional_monthly_sales WHERE regional_monthly_sales.region = 'West' ORDER BY regional_monthly_sales.month ASC;
 
+CREATE VIEW analyst_orders AS
+SELECT orders.order_id,
+       orders.customer_id,
+       orders.product_id,
+       orders.sales,
+       orders.quantity,
+       orders.discount
+FROM orders;
+
+SELECT * FROM analyst_orders;
