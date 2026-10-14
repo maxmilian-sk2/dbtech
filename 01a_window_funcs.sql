@@ -51,3 +51,25 @@ SELECT next_orders.customer_id,
 FROM next_orders
 WHERE next_orders.next_invoice_date IS NOT NULL
 ORDER BY days_to_next_invoice DESC;
+
+WITH price_history AS (
+    SELECT retail_sales.stock_code,
+           retail_sales.invoice_no,
+           retail_sales.invoice_date,
+           LAG(retail_sales.unit_price) OVER (
+               PARTITION BY retail_sales.stock_code
+               ORDER BY retail_sales.invoice_date
+           ) AS previous_price,
+           retail_sales.unit_price AS current_price
+    FROM retail_sales
+)
+SELECT price_history.stock_code,
+       price_history.invoice_no,
+       price_history.invoice_date,
+       price_history.previous_price,
+       price_history.current_price,
+       price_history.current_price - price_history.previous_price AS price_difference
+FROM price_history
+WHERE price_history.previous_price IS NOT NULL
+  AND price_history.current_price <> price_history.previous_price
+ORDER BY price_history.invoice_date ASC;
