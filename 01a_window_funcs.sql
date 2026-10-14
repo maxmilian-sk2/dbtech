@@ -73,3 +73,18 @@ FROM price_history
 WHERE price_history.previous_price IS NOT NULL
   AND price_history.current_price <> price_history.previous_price
 ORDER BY price_history.invoice_date ASC;
+
+WITH customer_sales AS (
+    SELECT retail_sales.customer_id,
+           SUM(retail_sales.quantity * retail_sales.unit_price) AS total_amount
+    FROM retail_sales
+    WHERE retail_sales.customer_id IS NOT NULL
+    GROUP BY retail_sales.customer_id
+)
+SELECT customer_sales.customer_id,
+       customer_sales.total_amount,
+       NTILE(4) OVER (
+           ORDER BY customer_sales.total_amount DESC
+       ) AS sales_quartile
+FROM customer_sales
+ORDER BY customer_sales.total_amount DESC;
