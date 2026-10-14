@@ -184,3 +184,25 @@ SELECT ranked_customers.country,
 FROM ranked_customers
 WHERE ranked_customers.sales_rank <= 5
 ORDER BY ranked_customers.country ASC, ranked_customers.month ASC, ranked_customers.sales_rank ASC, ranked_customers.customer_id ASC;
+
+WITH ranked_prices AS (
+    SELECT retail_sales.invoice_no,
+           retail_sales.stock_code,
+           retail_sales.description,
+           retail_sales.quantity,
+           retail_sales.unit_price,
+           DENSE_RANK() OVER (
+               PARTITION BY retail_sales.invoice_no
+               ORDER BY retail_sales.unit_price DESC
+           ) AS price_rank
+    FROM retail_sales
+)
+SELECT ranked_prices.invoice_no,
+       ranked_prices.stock_code,
+       ranked_prices.description,
+       ranked_prices.quantity,
+       ranked_prices.unit_price,
+       ranked_prices.price_rank
+FROM ranked_prices
+WHERE ranked_prices.price_rank <= 5
+ORDER BY ranked_prices.invoice_no ASC, ranked_prices.price_rank ASC, ranked_prices.stock_code ASC;
