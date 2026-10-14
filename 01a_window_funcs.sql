@@ -25,3 +25,29 @@ SELECT retail_sales.stock_code,
 FROM retail_sales
 WHERE retail_sales.quantity > 1
 ORDER BY retail_sales.stock_code ASC, retail_sales.country ASC, retail_sales.invoice_date ASC;
+
+WITH customer_orders AS (
+    SELECT DISTINCT retail_sales.customer_id,
+           retail_sales.invoice_no,
+           retail_sales.invoice_date::date AS invoice_date
+    FROM retail_sales
+    WHERE retail_sales.customer_id IS NOT NULL
+),
+next_orders AS (
+    SELECT customer_orders.customer_id,
+           customer_orders.invoice_no,
+           customer_orders.invoice_date,
+           LEAD(customer_orders.invoice_date) OVER (
+               PARTITION BY customer_orders.customer_id
+               ORDER BY customer_orders.invoice_date
+           ) AS next_invoice_date
+    FROM customer_orders
+)
+SELECT next_orders.customer_id,
+       next_orders.invoice_no,
+       next_orders.invoice_date,
+       next_orders.next_invoice_date,
+       next_orders.next_invoice_date - next_orders.invoice_date AS days_to_next_invoice
+FROM next_orders
+WHERE next_orders.next_invoice_date IS NOT NULL
+ORDER BY days_to_next_invoice DESC;
