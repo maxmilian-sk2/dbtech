@@ -155,3 +155,32 @@ SELECT ranked_items.invoice_no,
 FROM ranked_items
 WHERE ranked_items.row_num <= 3
 ORDER BY ranked_items.invoice_no ASC, ranked_items.row_num ASC;
+
+WITH monthly_customer_sales AS (
+    SELECT retail_sales.country,
+           DATE_TRUNC('month', retail_sales.invoice_date)::date AS month,
+           retail_sales.customer_id,
+           SUM(retail_sales.quantity * retail_sales.unit_price) AS total_amount
+    FROM retail_sales
+    WHERE retail_sales.customer_id IS NOT NULL
+    GROUP BY retail_sales.country, DATE_TRUNC('month', retail_sales.invoice_date)::date, retail_sales.customer_id
+),
+ranked_customers AS (
+    SELECT monthly_customer_sales.country,
+           monthly_customer_sales.month,
+           monthly_customer_sales.customer_id,
+           monthly_customer_sales.total_amount,
+           DENSE_RANK() OVER (
+               PARTITION BY monthly_customer_sales.country, monthly_customer_sales.month
+               ORDER BY monthly_customer_sales.total_amount DESC
+           ) AS sales_rank
+    FROM monthly_customer_sales
+)
+SELECT ranked_customers.country,
+       ranked_customers.month,
+       ranked_customers.customer_id,
+       ranked_customers.total_amount,
+       ranked_customers.sales_rank
+FROM ranked_customers
+WHERE ranked_customers.sales_rank <= 5
+ORDER BY ranked_customers.country ASC, ranked_customers.month ASC, ranked_customers.sales_rank ASC, ranked_customers.customer_id ASC;
