@@ -105,3 +105,30 @@ SELECT monthly_country_sales.country,
        ) AS sales_quartile
 FROM monthly_country_sales
 ORDER BY monthly_country_sales.country ASC, monthly_country_sales.month ASC;
+
+WITH numbered_purchases AS (
+    SELECT retail_sales.customer_id,
+           retail_sales.invoice_no,
+           retail_sales.invoice_date,
+           retail_sales.stock_code,
+           retail_sales.description,
+           retail_sales.quantity,
+           retail_sales.unit_price,
+           ROW_NUMBER() OVER (
+               PARTITION BY retail_sales.customer_id
+               ORDER BY retail_sales.invoice_date ASC
+           ) AS purchase_number
+    FROM retail_sales
+    WHERE retail_sales.customer_id IS NOT NULL
+)
+SELECT numbered_purchases.customer_id,
+       numbered_purchases.invoice_no,
+       numbered_purchases.invoice_date,
+       numbered_purchases.stock_code,
+       numbered_purchases.description,
+       numbered_purchases.quantity,
+       numbered_purchases.unit_price
+FROM numbered_purchases
+WHERE numbered_purchases.purchase_number = 1
+ORDER BY numbered_purchases.customer_id ASC;
+
