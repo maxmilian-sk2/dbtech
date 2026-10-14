@@ -88,3 +88,20 @@ SELECT customer_sales.customer_id,
        ) AS sales_quartile
 FROM customer_sales
 ORDER BY customer_sales.total_amount DESC;
+
+WITH monthly_country_sales AS (
+    SELECT retail_sales.country,
+           DATE_TRUNC('month', retail_sales.invoice_date)::date AS month,
+           SUM(retail_sales.quantity * retail_sales.unit_price) AS total_amount
+    FROM retail_sales
+    GROUP BY retail_sales.country, DATE_TRUNC('month', retail_sales.invoice_date)::date
+)
+SELECT monthly_country_sales.country,
+       monthly_country_sales.month,
+       monthly_country_sales.total_amount,
+       NTILE(4) OVER (
+           PARTITION BY monthly_country_sales.country
+           ORDER BY monthly_country_sales.total_amount DESC
+       ) AS sales_quartile
+FROM monthly_country_sales
+ORDER BY monthly_country_sales.country ASC, monthly_country_sales.month ASC;
