@@ -132,3 +132,26 @@ FROM numbered_purchases
 WHERE numbered_purchases.purchase_number = 1
 ORDER BY numbered_purchases.customer_id ASC;
 
+WITH ranked_items AS (
+    SELECT retail_sales.invoice_no,
+           retail_sales.stock_code,
+           retail_sales.description,
+           retail_sales.quantity,
+           retail_sales.unit_price,
+           retail_sales.quantity * retail_sales.unit_price AS amount,
+           ROW_NUMBER() OVER (
+               PARTITION BY retail_sales.invoice_no
+               ORDER BY retail_sales.quantity * retail_sales.unit_price DESC
+           ) AS row_num
+    FROM retail_sales
+)
+SELECT ranked_items.invoice_no,
+       ranked_items.stock_code,
+       ranked_items.description,
+       ranked_items.quantity,
+       ranked_items.unit_price,
+       ranked_items.amount,
+       ranked_items.row_num
+FROM ranked_items
+WHERE ranked_items.row_num <= 3
+ORDER BY ranked_items.invoice_no ASC, ranked_items.row_num ASC;
