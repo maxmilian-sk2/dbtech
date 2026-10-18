@@ -102,3 +102,23 @@ FROM customer_dates
 WHERE customer_dates.last_order_date < customer_dates.latest_order_date - INTERVAL '90 days'
 ORDER BY customer_dates.last_order_date ASC;
 
+WITH sales_by_month AS (
+    SELECT DATE_TRUNC('month', orders.order_date)::date AS month,
+           SUM(orders.sales) AS monthly_sales
+    FROM orders
+    GROUP BY DATE_TRUNC('month', orders.order_date)::date
+),
+sales_with_previous AS (
+    SELECT sales_by_month.month,
+           sales_by_month.monthly_sales,
+           LAG(sales_by_month.monthly_sales) OVER (ORDER BY sales_by_month.month) AS prev_month_sales
+    FROM sales_by_month
+)
+SELECT sales_with_previous.month,
+       sales_with_previous.monthly_sales,
+       sales_with_previous.prev_month_sales,
+       sales_with_previous.monthly_sales - sales_with_previous.prev_month_sales AS sales_change,
+       ROUND((sales_with_previous.monthly_sales - sales_with_previous.prev_month_sales) / sales_with_previous.prev_month_sales * 100, 2) AS growth_percentage
+FROM sales_with_previous
+ORDER BY sales_with_previous.month ASC;
+
