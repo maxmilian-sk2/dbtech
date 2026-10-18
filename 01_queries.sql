@@ -67,3 +67,22 @@ SELECT sales_by_month.month,
 FROM sales_by_month
 ORDER BY sales_by_month.month ASC;
 
+WITH product_totals AS (
+    SELECT products.category,
+           products.product_name,
+           SUM(orders.sales) AS product_sales
+    FROM orders
+    JOIN products ON orders.product_id = products.product_id
+    GROUP BY products.category, products.product_name
+)
+SELECT product_totals.category,
+       product_totals.product_name,
+       product_totals.product_sales,
+       SUM(product_totals.product_sales) OVER (PARTITION BY product_totals.category) AS category_total,
+       ROUND(
+           product_totals.product_sales * 100.0 /
+           SUM(product_totals.product_sales) OVER (PARTITION BY product_totals.category),
+           2
+       ) AS pct_of_category
+FROM product_totals
+ORDER BY product_totals.category ASC, product_totals.product_sales DESC;
