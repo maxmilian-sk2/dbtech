@@ -39,3 +39,18 @@ SELECT customer_profit.region,
 FROM customer_profit
 ORDER BY customer_profit.region ASC, profit_rank ASC;
 
+WITH customer_sales AS (
+    SELECT customers.customer_name,
+           SUM(orders.sales) AS total_sales
+    FROM customers
+    JOIN orders ON customers.customer_id = orders.customer_id
+    GROUP BY customers.customer_id, customers.customer_name
+)
+SELECT customer_sales.customer_name,
+       customer_sales.total_sales,
+       NTILE(4) OVER (
+           ORDER BY customer_sales.total_sales DESC
+       ) AS quartile
+FROM customer_sales
+ORDER BY customer_sales.total_sales DESC;
+
