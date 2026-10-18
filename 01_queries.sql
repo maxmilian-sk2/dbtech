@@ -54,3 +54,16 @@ SELECT customer_sales.customer_name,
 FROM customer_sales
 ORDER BY customer_sales.total_sales DESC;
 
+WITH sales_by_month AS (
+    SELECT DATE_TRUNC('month', orders.order_date)::date AS month,
+           SUM(orders.sales) AS monthly_sales
+    FROM orders
+    GROUP BY DATE_TRUNC('month', orders.order_date)::date
+)
+SELECT sales_by_month.month,
+       sales_by_month.monthly_sales,
+       LAG(sales_by_month.monthly_sales, 1) OVER (ORDER BY sales_by_month.month) AS prev_month_sales,
+       LEAD(sales_by_month.monthly_sales, 1) OVER (ORDER BY sales_by_month.month) AS next_month_sales
+FROM sales_by_month
+ORDER BY sales_by_month.month ASC;
+
