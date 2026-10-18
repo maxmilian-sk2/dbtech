@@ -122,3 +122,18 @@ SELECT sales_with_previous.month,
 FROM sales_with_previous
 ORDER BY sales_with_previous.month ASC;
 
+WITH first_purchase AS (
+    SELECT orders.customer_id,
+           DATE_TRUNC('month', MIN(orders.order_date))::date AS first_month
+    FROM orders
+    GROUP BY orders.customer_id
+)
+SELECT COUNT(*) AS returning_customers
+FROM first_purchase
+WHERE first_purchase.first_month = '2024-06-01'
+  AND EXISTS (
+      SELECT 1
+      FROM orders
+      WHERE orders.customer_id = first_purchase.customer_id
+        AND DATE_TRUNC('month', orders.order_date) > first_purchase.first_month
+  );
