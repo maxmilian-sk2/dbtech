@@ -17,3 +17,25 @@ FROM numbered_orders
 WHERE numbered_orders.order_rank <= 2
 ORDER BY numbered_orders.customer_name ASC, numbered_orders.order_rank ASC;
 
+WITH customer_profit AS (
+    SELECT customers.region,
+           customers.customer_name,
+           SUM(orders.profit) AS total_profit
+    FROM customers
+    JOIN orders ON customers.customer_id = orders.customer_id
+    GROUP BY customers.region, customers.customer_id, customers.customer_name
+)
+SELECT customer_profit.region,
+       customer_profit.customer_name,
+       customer_profit.total_profit,
+       RANK() OVER (
+           PARTITION BY customer_profit.region
+           ORDER BY customer_profit.total_profit DESC
+       ) AS profit_rank,
+       DENSE_RANK() OVER (
+           PARTITION BY customer_profit.region
+           ORDER BY customer_profit.total_profit DESC
+       ) AS profit_dense_rank
+FROM customer_profit
+ORDER BY customer_profit.region ASC, profit_rank ASC;
+
